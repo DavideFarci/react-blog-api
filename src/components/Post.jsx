@@ -12,22 +12,31 @@ const Post = ({ post }) => {
   } = post;
 
   return (
-    <div className="card">
-      <h3>{title}</h3>
-      <img src={image} alt={slug} />
-      <p>{content}</p>
-      <div>{category?.name}</div>
-      <div>
-        Tags:
+    <div className="card border p-3">
+      <h3 className="font-bold text-2xl text-center">{title}</h3>
+      <img className="w-full" src={image} alt={slug} />
+      <p className="text-sm mb-3">{content}</p>
+      <div className="mb-2">
+        <span className="font-bold">Category: </span>
+        {category?.name}
+      </div>
+      <div className="mb-2">
+        <span className="font-bold">Tags: </span>
         {tags.map((tag, i) => {
-          return <span key={i}>{tag.name}</span>;
+          return (
+            <span className="mr-2" key={i}>
+              {tag.name}
+            </span>
+          );
         })}
       </div>
-      <div>
-        Creato: <span>{createdAt.slice(0, 10)}</span>
+      <div className="mb-2">
+        <span className="font-bold">Creato: </span>
+        {createdAt.slice(0, 10)}
       </div>
-      <div>
-        Ultima modifica: <span>{updatedAt.slice(0, 10)}</span>
+      <div className="mb-2">
+        <span className="font-bold">Ultima modifica: </span>
+        {updatedAt.slice(0, 10)}
       </div>
     </div>
   );
