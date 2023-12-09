@@ -1,0 +1,262 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const initialData = {
+  title: "",
+  image: "",
+  content: "",
+  categoryId: "",
+  tags: [],
+  published: false,
+};
+
+const PostCreateOverlay = ({ show, closing }) => {
+  // states
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [formValues, setFormValues] = useState(initialData);
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  // mwthods
+  const getCategoriesAndTags = async () => {
+    try {
+      const respCategories = await fetch("http://localhost:5174/categories");
+      const dataCategories = await respCategories.json();
+      const respTags = await fetch("http://localhost:5174/tags");
+      const dataTags = await respTags.json();
+
+      setCategories(dataCategories);
+      setTags(dataTags);
+    } catch (error) {
+      console.error("Errore durante il recupero delle categorie:", error);
+    }
+  };
+
+  const handleDataForm = (e, input) => {
+    let value = e.target.value;
+    const checked = e.target.checked;
+
+    let newValue = e.target.type === "checkbox" ? checked : value;
+
+    if (input === "tags") {
+      let currentTags = formValues.tags;
+
+      if (checked) {
+        currentTags.push(+value);
+      } else {
+        currentTags = currentTags.filter((tagId) => tagId !== value);
+      }
+      newValue = currentTags;
+    }
+
+    if (input === "published") {
+      if (checked) {
+        setFormValues((oldValue) => {
+          return {
+            ...oldValue,
+            [input]: true,
+          };
+        });
+      } else {
+        setFormValues((oldValue) => {
+          return {
+            ...oldValue,
+            [input]: false,
+          };
+        });
+      }
+    }
+
+    if (input === "categoryId") {
+      newValue = +value;
+    }
+
+    setFormValues((oldValue) => {
+      return {
+        ...oldValue,
+        [input]: newValue,
+      };
+    });
+  };
+
+  const selectTag = (tag) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter((tagId) => tagId !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const resp = await axios.post("http://localhost:5174/posts", formValues, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const responseData = resp.data;
+      console.log("Risposta: " + responseData);
+    } catch (error) {
+      console.log("Errore: " + error);
+    }
+  };
+
+  // hooks
+  useEffect(() => {
+    getCategoriesAndTags();
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 z-[60]">
+      <div className="w-2/3 p-3 absolute z-[60] bg-green-600 top-8 left-48 rounded-md shadow-2xl shadow-slate-800 flex flex-col items-center">
+        <div onClick={closing} className="text-2xl self-end">
+          <i className="fa-regular fa-circle-xmark text-green-800 text-4xl hover:text-white hover:cursor-pointer duration-75"></i>
+        </div>
+        <form
+          className="mb-8 w-3/4"
+          id="postCreate"
+          onSubmit={handleFormSubmit}
+        >
+          {/* Titolo  */}
+          <div className="mb-4 flex flex-col">
+            <label htmlFor="title" className="font-semibold mb-0.5">
+              Titolo
+            </label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              value={formValues.title}
+              onChange={(e) => handleDataForm(e, "title")}
+              className="p-1 rounded-md text-black"
+            />
+          </div>
+          <div className="mb-4 flex flex-col">
+            <label htmlFor="image" className="font-semibold mb-0.5">
+              Immagine
+            </label>
+            <input
+              type="text"
+              name="image"
+              value={formValues.image}
+              onChange={(e) => handleDataForm(e, "image")}
+              className="p-1 rounded-md text-black"
+            />
+          </div>
+          <div className="mb-4 flex flex-col">
+            <label htmlFor="content" className="font-semibold mb-0.5">
+              Contenuto
+            </label>
+            <textarea
+              name="content"
+              cols="30"
+              rows="5"
+              value={formValues.content}
+              onChange={(e) => handleDataForm(e, "content")}
+              className="p-1 rounded-md text-black"
+            ></textarea>
+          </div>
+
+          {/* Categoria  */}
+          <h4 className="font-semibold mb-2 mr-2">Categoria</h4>
+          <div className="flex items-center">
+            {categories.map((categ) => {
+              return (
+                <div key={categ.id}>
+                  <label className="inline-block before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-full border border-blue-gray-200 text-gray-900 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:before:bg-gray-900 hover:before:opacity-10">
+                    <input
+                      type="radio"
+                      name={`categoryId`}
+                      id={categ.id}
+                      value={categ.id}
+                      onChange={(e) => handleDataForm(e, "categoryId")}
+                      className="hidden peer"
+                    />
+                    <span className="absolute text-gray-900 transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3.5 w-3.5"
+                        viewBox="0 0 16 16"
+                        fill="#f8fafc"
+                      >
+                        <circle
+                          data-name="ellipse"
+                          cx="8"
+                          cy="8"
+                          r="8"
+                        ></circle>
+                      </svg>
+                    </span>
+                  </label>
+                  <span className="inline-block align-[4px] mr-0.5 px-2 py-0.5 text-sm font-semibold">
+                    {categ.name}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tags  */}
+          <h4 className="font-semibold mb-3">Aggiungi Tag</h4>
+          <div className="flex flex-wrap gap-1">
+            {tags.map((tag) => {
+              return (
+                <div key={tag.id}>
+                  <label
+                    htmlFor={`tag-${tag.id}`}
+                    className={`inline-block align-[3px] rounded-full hover:cursor-pointer hover:scale-95 duration-75 mr-0.5 text-xs font-semibold ${
+                      selectedTags.includes(tag.id)
+                        ? "bg-green-800 border-3 border-green-400"
+                        : "bg-green-200 border-3 border-green-800"
+                    }`}
+                  >
+                    <span
+                      onClick={() => selectTag(tag.id)}
+                      className={`inline-block align-[4px] mr-0.5 px-2 py-0.5 text-sm font-semibold ${
+                        selectedTags.includes(tag.id)
+                          ? "text-white"
+                          : "text-green-800"
+                      }`}
+                    >
+                      {tag.name}
+                    </span>
+                  </label>
+                  <input
+                    type="checkbox"
+                    name={`tag-${tag.id}`}
+                    id={`tag-${tag.id}`}
+                    value={tag.id}
+                    onChange={(e) => handleDataForm(e, "tags")}
+                    className="hidden peer"
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pubblicazione  */}
+          <div className="flex items-center mb-3">
+            <span className="font-semibold mr-2">Publica </span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                onChange={(e) => handleDataForm(e, "published")}
+                className="sr-only peer"
+              />
+              <div className="peer ring-0 bg-rose-400  rounded-full outline-none duration-300 after:duration-500 w-10 h-10  shadow-md peer-checked:bg-emerald-500  peer-focus:outline-none  after:content-['✖️'] after:rounded-full after:absolute after:outline-none after:h-8 after:w-8 after:bg-gray-50 after:top-1 after:left-1 after:flex after:justify-center after:items-center  peer-hover:after:scale-75 peer-checked:after:content-['✔️'] after:-rotate-180 peer-checked:after:rotate-0"></div>
+            </label>
+          </div>
+
+          <button type="submit">Crea</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default PostCreateOverlay;
