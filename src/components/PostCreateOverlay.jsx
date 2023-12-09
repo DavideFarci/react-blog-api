@@ -112,8 +112,14 @@ const PostCreateOverlay = ({ show, closing }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-[60]">
-      <div className="w-2/3 p-3 absolute z-[60] bg-green-600 top-8 left-48 rounded-md shadow-2xl shadow-slate-800 flex flex-col items-center">
+    <div
+      className="fixed inset-0 bg-black/60 z-[60] overflow-auto"
+      onClick={closing}
+    >
+      <div
+        className="w-2/3 p-3 absolute z-[60] bg-green-600 top-40 left-48 rounded-md shadow-2xl shadow-slate-800 flex flex-col items-center border-2 border-green-700"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div onClick={closing} className="text-2xl self-end">
           <i className="fa-regular fa-circle-xmark text-green-800 text-4xl hover:text-white hover:cursor-pointer duration-75"></i>
         </div>
@@ -122,6 +128,9 @@ const PostCreateOverlay = ({ show, closing }) => {
           id="postCreate"
           onSubmit={handleFormSubmit}
         >
+          <h2 className="self-start text-2xl py-3 font-bold text-green-900">
+            Nuovo Post
+          </h2>
           {/* Titolo  */}
           <div className="mb-4 flex flex-col">
             <label htmlFor="title" className="font-semibold mb-0.5">
@@ -133,7 +142,7 @@ const PostCreateOverlay = ({ show, closing }) => {
               id="title"
               value={formValues.title}
               onChange={(e) => handleDataForm(e, "title")}
-              className="p-1 rounded-md text-black"
+              className="p-1 rounded-md text-black shadow-md"
             />
           </div>
           <div className="mb-4 flex flex-col">
@@ -145,7 +154,7 @@ const PostCreateOverlay = ({ show, closing }) => {
               name="image"
               value={formValues.image}
               onChange={(e) => handleDataForm(e, "image")}
-              className="p-1 rounded-md text-black"
+              className="p-1 rounded-md text-black shadow-md"
             />
           </div>
           <div className="mb-4 flex flex-col">
@@ -158,13 +167,13 @@ const PostCreateOverlay = ({ show, closing }) => {
               rows="5"
               value={formValues.content}
               onChange={(e) => handleDataForm(e, "content")}
-              className="p-1 rounded-md text-black"
+              className="p-1 rounded-md text-black shadow-md"
             ></textarea>
           </div>
 
           {/* Categoria  */}
-          <h4 className="font-semibold mb-2 mr-2">Categoria</h4>
-          <div className="flex items-center">
+          <h4 className="font-semibold mb-1 mr-2">Categoria</h4>
+          <div className="flex items-center mb-2">
             {categories.map((categ) => {
               return (
                 <div key={categ.id}>
@@ -202,8 +211,8 @@ const PostCreateOverlay = ({ show, closing }) => {
           </div>
 
           {/* Tags  */}
-          <h4 className="font-semibold mb-3">Aggiungi Tag</h4>
-          <div className="flex flex-wrap gap-1">
+          <h4 className="font-semibold mb-1">Aggiungi Tag</h4>
+          <div className="flex flex-wrap gap-1 mb-2">
             {tags.map((tag) => {
               return (
                 <div key={tag.id}>
@@ -252,7 +261,12 @@ const PostCreateOverlay = ({ show, closing }) => {
             </label>
           </div>
 
-          <button type="submit">Crea</button>
+          <button
+            type="submit"
+            className="px-4 py-2 rounded-full bg-green-800 shadow-md hover:px-6 hover:bg-green-900 duration-150 font-semibold"
+          >
+            Crea
+          </button>
         </form>
       </div>
     </div>
