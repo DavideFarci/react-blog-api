@@ -5,7 +5,7 @@ const initialData = {
   title: "",
   image: "",
   content: "",
-  categoryId: "",
+  categoryId: null,
   tags: [],
   published: false,
 };

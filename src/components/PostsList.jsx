@@ -12,7 +12,7 @@ const PostsList = () => {
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [posts]);
 
   return (
     <div className="container mx-auto">
