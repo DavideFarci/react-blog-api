@@ -16,6 +16,7 @@ const PostCreateOverlay = ({ show, closing }) => {
   const [tags, setTags] = useState([]);
   const [formValues, setFormValues] = useState(initialData);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [error, setError] = useState(false);
 
   // mwthods
   const getCategoriesAndTags = async () => {
@@ -97,10 +98,9 @@ const PostCreateOverlay = ({ show, closing }) => {
         },
       });
 
-      const responseData = resp.data;
-      console.log("Risposta: " + responseData);
+      closing();
     } catch (error) {
-      console.log("Errore: " + error);
+      setError(true);
     }
   };
 
@@ -128,6 +128,11 @@ const PostCreateOverlay = ({ show, closing }) => {
           id="postCreate"
           onSubmit={handleFormSubmit}
         >
+          {error && (
+            <div className="text-lg font-bold p-2 bg-red-400 text-red-800 mt-2 shadow-md rounded">
+              Errore nella creazione del post
+            </div>
+          )}
           <h2 className="self-start text-2xl py-3 font-bold text-green-900">
             Nuovo Post
           </h2>
