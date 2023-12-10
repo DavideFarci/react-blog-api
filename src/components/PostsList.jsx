@@ -18,8 +18,8 @@ const PostsList = () => {
     <div className="container mx-auto">
       <h2 className="text-center text-4xl font-bold py-8">Posts List</h2>
       <div className="grid grid-cols-1 gap-4">
-        {posts.map((post, i) => {
-          return <Post key={i} post={post} />;
+        {posts.map((post) => {
+          return <Post key={post.id} post={post} />;
         })}
       </div>
     </div>
