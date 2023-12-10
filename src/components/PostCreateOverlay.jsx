@@ -11,14 +11,14 @@ const initialData = {
 };
 
 const PostCreateOverlay = ({ show, closing }) => {
-  // states
+  // States
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [formValues, setFormValues] = useState(initialData);
   const [selectedTags, setSelectedTags] = useState([]);
   const [error, setError] = useState(false);
 
-  // mwthods
+  // Methods
   const getCategoriesAndTags = async () => {
     try {
       const respCategories = await fetch("http://localhost:5174/categories");
@@ -104,7 +104,7 @@ const PostCreateOverlay = ({ show, closing }) => {
     }
   };
 
-  // hooks
+  // Hooks
   useEffect(() => {
     getCategoriesAndTags();
   }, []);
@@ -133,9 +133,6 @@ const PostCreateOverlay = ({ show, closing }) => {
               Errore nella creazione del post
             </div>
           )}
-          <h2 className="self-start text-2xl py-3 font-bold text-green-900">
-            Nuovo Post
-          </h2>
           {/* Titolo  */}
           <div className="mb-4 flex flex-col">
             <label htmlFor="title" className="font-semibold mb-0.5">
@@ -245,6 +242,7 @@ const PostCreateOverlay = ({ show, closing }) => {
                     name={`tag-${tag.id}`}
                     id={`tag-${tag.id}`}
                     value={tag.id}
+                    checked={formValues.tags?.includes(tag.id)}
                     onChange={(e) => handleDataForm(e, "tags")}
                     className="hidden peer"
                   />
