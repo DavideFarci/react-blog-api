@@ -1,4 +1,5 @@
-const Post = ({ post, editingId }) => {
+/* eslint-disable react/prop-types */
+const Post = ({ post, editingId, onSelectedPost }) => {
   const {
     id,
     title,
@@ -18,6 +19,7 @@ const Post = ({ post, editingId }) => {
         <img className="max-w-xs" src={image} alt={slug} />
         <button
           title="Modifica"
+          onClick={() => onSelectedPost(post)}
           className="  px-4 py-2 rounded-md border border-yellow-500 bg-yellow-500/20 hover:bg-yellow-500/40 duration-100 mr-2"
         >
           <i className="fa-solid fa-pen-to-square text-yellow-500"></i>

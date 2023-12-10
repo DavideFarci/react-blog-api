@@ -10,7 +10,7 @@ const initialData = {
   published: false,
 };
 
-const PostCreateOverlay = ({ show, closing }) => {
+const PostCreateOverlay = ({ show, onClosing, postToEdit, onSave, isNew }) => {
   // States
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -92,14 +92,11 @@ const PostCreateOverlay = ({ show, closing }) => {
     e.preventDefault();
 
     try {
-      const resp = await axios.post("http://localhost:5174/posts", formValues, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      await onSave(formValues);
 
-      closing();
+      onClosing();
     } catch (error) {
+      console.log(error);
       setError(true);
     }
   };
@@ -109,18 +106,26 @@ const PostCreateOverlay = ({ show, closing }) => {
     getCategoriesAndTags();
   }, []);
 
+  useEffect(() => {
+    if (!isNew) {
+      setFormValues(postToEdit);
+      const _selectedTags = [...postToEdit.tags].map((tag) => tag.id);
+      setSelectedTags(_selectedTags);
+    }
+  }, [postToEdit, isNew]);
+
   if (!show) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black/60 z-[60] overflow-auto"
-      onClick={closing}
+      onClick={onClosing}
     >
       <div
         className="w-2/3 p-3 absolute z-[60] bg-green-600 top-40 left-48 rounded-md shadow-2xl shadow-slate-800 flex flex-col items-center border-2 border-green-700"
         onClick={(e) => e.stopPropagation()}
       >
-        <div onClick={closing} className="text-2xl self-end">
+        <div onClick={onClosing} className="text-2xl self-end">
           <i className="fa-regular fa-circle-xmark text-green-800 text-4xl hover:text-white hover:cursor-pointer duration-75"></i>
         </div>
         <form
@@ -185,6 +190,7 @@ const PostCreateOverlay = ({ show, closing }) => {
                       name={`categoryId`}
                       id={categ.id}
                       value={categ.id}
+                      checked={formValues.categoryId == categ.id}
                       onChange={(e) => handleDataForm(e, "categoryId")}
                       className="hidden peer"
                     />
@@ -257,6 +263,7 @@ const PostCreateOverlay = ({ show, closing }) => {
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
+                checked={formValues.published}
                 onChange={(e) => handleDataForm(e, "published")}
                 className="sr-only peer"
               />
@@ -268,7 +275,7 @@ const PostCreateOverlay = ({ show, closing }) => {
             type="submit"
             className="px-4 py-2 rounded-full bg-green-800 shadow-md hover:px-6 hover:bg-green-900 duration-150 font-semibold"
           >
-            Crea
+            {!isNew ? "Modifica" : "Crea"}
           </button>
         </form>
       </div>
