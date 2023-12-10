@@ -1,7 +1,7 @@
 const FapButton = ({ openOverlay }) => {
   return (
     <button
-      title="Add Post"
+      title="Nuovo Post"
       className="group cursor-pointer fixed bottom-6 right-6 outline-none hover:rotate-90 duration-300"
       onClick={openOverlay}
     >
