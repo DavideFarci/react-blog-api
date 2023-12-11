@@ -40,7 +40,7 @@ const PostsList = () => {
   const savePost = async (payload) => {
     console.log(payload);
     if (isNew) {
-      const resp = await axios.post("http://localhost:5174/posts", payload, {
+      await axios.post("http://localhost:5174/posts", payload, {
         headers: {
           "Content-Type": "application/json",
         },
